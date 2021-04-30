@@ -1,9 +1,12 @@
 import glob
 import re
-import io
+import io,os
 import pandas as pd
 
 import nltk
+nltk.download('averaged_perceptron_tagger')
+nltk.download('maxent_ne_chunker')
+nltk.download('words')
 from nltk import sent_tokenize
 from nltk import word_tokenize
 from nltk import pos_tag
@@ -35,11 +38,14 @@ def redact_test_folder_docs(glob_test_text):
         with io.open(thefile, 'r', encoding='utf-8') as fyl:
             text = fyl.read()
         names_list=get_entity(text)
+        print(names_list)
         doc=redacted_doc(names_list,text)
+        print(doc)
         if not os.path.exists('redacted'):
             os.makedirs('redacted')
-        text_file = thefile.split("\\")[-1]
+        text_file = thefile.split("/")[-1]
         output_file = text_file.replace('.txt', '.redacted')
+        print(output_file)
         file_obj = open('redacted/'+output_file, "w",encoding = "utf-8")
         file_obj.write(doc)
         file_obj.close()
@@ -120,10 +126,11 @@ def unredactor(redacted_files_folder_path, destination_folder_path , clf):
             unredacted_text = unredacted_text+' '+text_to_be_redacted[start_index:name_last_index]
             start_index = name_last_index
             
-#         print(redacted_text)
+        print(unredacted_text)
         if not os.path.exists(destination_folder_path):
             os.makedirs(destination_folder_path)
-        output_file = thefile.split("\\")[-1]
+        output_file = thefile.split("/")[-1]
+        print(output_file)
         output_file = output_file.replace('.redacted', '.txt')
         file_obj = open(destination_folder_path+'/'+output_file, "w",encoding = "utf-8")
         file_obj.write(unredacted_text)
