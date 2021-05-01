@@ -2,6 +2,8 @@ import argparse
 import glob, os
 import os.path
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
 from project2 import main
 
 
@@ -16,7 +18,10 @@ if __name__ == '__main__':
     clf = DecisionTreeClassifier(random_state=0)
     clf_train=clf.fit(train_df_x.values,train_df_y.values)
     print("training completed\n")
-    print("readcting documents from test folder\n")
+    X_train, X_test, y_train, y_test = train_test_split(train_df_x, train_df_y, test_size=0.15, random_state=1)
+    y_pred=clf.predict(X_test)
+    print("\nthis is my model Accuracy:",metrics.accuracy_score(y_test, y_pred))
+    print("\nreadcting documents from test folder\n")
     main.redact_test_folder_docs(glob_test_text)
     print("written redacted files into redacted folder\n")
     print("testing begins\n")
