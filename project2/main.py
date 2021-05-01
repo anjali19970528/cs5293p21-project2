@@ -81,12 +81,12 @@ def test_features(text, thefile):
     unic_char = '\u2588'
     redacted_list=[]
 #             print(text)
-    names_list=get_entity(text)
-    print(names_list)
-    doc=redacted_doc(names_list,text)
+   # names_list=get_entity(text)
+   # print(names_list)
+   # doc=redacted_doc(names_list,text)
     rating = int(re.findall(r'_(\d{1,2}).redacted',thefile)[0])
     red_block = unic_char + r'+\s*' + unic_char + r'+'
-    for match in re.finditer(red_block, doc):
+    for match in re.finditer(red_block, text):
         matched_block = match.string
         s = match.start()
         e = match.end()
@@ -99,7 +99,7 @@ def test_features(text, thefile):
         redacted_list.append(red_blocks_dict)
    
     test_df=pd.DataFrame(redacted_list)
-    return test_df, doc
+    return test_df,text
 
 
 def unredactor(redacted_files_folder_path, destination_folder_path , clf):
@@ -123,7 +123,11 @@ def unredactor(redacted_files_folder_path, destination_folder_path , clf):
             name_last_index = redacted_blocks_indices_list[i][1]
             print(name_start_index, name_last_index, len(text))
             text_to_be_redacted = redacted_text.replace(redacted_text[name_start_index:name_last_index], pred_name)
-            unredacted_text = unredacted_text+' '+text_to_be_redacted[start_index:name_last_index]
+            if i==len(predicted_names)-1:
+                unredacted_text = unredacted_text+' '+text_to_be_redacted[start_index:]
+                #name_last_index=len(redacted_text)-1
+            else:
+                unredacted_text = unredacted_text+' '+text_to_be_redacted[start_index:name_last_index]
             start_index = name_last_index
             
         print(unredacted_text)
