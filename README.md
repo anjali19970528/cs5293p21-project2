@@ -56,7 +56,7 @@ This function is going to take a path of a folder which has test text documents 
 
 ** get_name_features(glob_text)**
 
-This function is going to take a path of a folder which has train text documents and using glob operator it is going to read all the files in that location and by calling  get_entity(text) it gets names_list and then it gets features of names like name, name_length, number of words in a name, rating of that text file(using regex) and appends them into a list of dictionaries with these features as key value pairs. This function returns list of features.
+This function is going to take a path of a folder which has train text documents and using glob operator it is going to read all the files in that location and by calling  get_entity(text) it gets names_list and then it gets features of names like name, name_length, number of words in a name and target value name, rating of that text file(using regex) and appends them into a list of dictionaries with these features as key value pairs. This function returns list of features.
 
 **train_features(glob_text)**
 
