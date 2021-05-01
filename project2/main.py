@@ -34,13 +34,13 @@ def redacted_doc(names_list,text):
     return text
 
 def redact_test_folder_docs(glob_test_text):
-    for thefile in glob.glob(glob_test_text)[:3]:
+    for thefile in glob.glob(glob_test_text):
         with io.open(thefile, 'r', encoding='utf-8') as fyl:
             text = fyl.read()
         names_list=get_entity(text)
        # print(names_list)
         doc=redacted_doc(names_list,text)
-       # print(doc)
+        #print(doc)
         if not os.path.exists('redacted'):
             os.makedirs('redacted')
         text_file = thefile.split("/")[-1]
@@ -53,7 +53,7 @@ def redact_test_folder_docs(glob_test_text):
 
 def get_name_features(glob_text):
     name_features=[]
-    for thefile in glob.glob(glob_text)[:3]:
+    for thefile in glob.glob(glob_text):
 #         print(thefile)
         with io.open(thefile, 'r', encoding='utf-8') as fyl:
             text = fyl.read()
@@ -81,6 +81,8 @@ def test_features(text, thefile):
     unic_char = '\u2588'
     redacted_list=[]
     rating = int(re.findall(r'_(\d{1,2}).redacted',thefile)[0])
+   # print("this is tes_features")
+   # print(text)
     red_block = unic_char + r'+\s*' + unic_char + r'+'
     for match in re.finditer(red_block, text):
         matched_block = match.string
@@ -93,7 +95,7 @@ def test_features(text, thefile):
         red_blocks_dict['start_index'] = s
         red_blocks_dict['end_index'] = e
         redacted_list.append(red_blocks_dict)
-   
+   # print(redacted_list) 
     test_df=pd.DataFrame(redacted_list)
     return test_df,text
 
@@ -103,7 +105,13 @@ def unredactor(redacted_files_folder_path, destination_folder_path , clf):
        # print(thefile)
         with io.open(thefile, 'r', encoding='utf-8') as fyl:
             text = fyl.read()
+       # print(thefile)
         test_features_df, redacted_text = test_features(text, thefile)
+        #print(test_features_df)
+        #checking whther testing features are empty
+        if test_features_df.empty:
+            print("there are no redacted blocks to be unredacted in this file")
+            continue
         test_features_X = test_features_df[['name length', 'no_of_words', 'rating']]
         predicted_names = clf.predict(test_features_X.values)
     #     filepath = filepath.replace('redacted','unredacted')

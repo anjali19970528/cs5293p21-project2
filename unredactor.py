@@ -18,7 +18,7 @@ if __name__ == '__main__':
     clf = DecisionTreeClassifier(random_state=0)
     clf_train=clf.fit(train_df_x.values,train_df_y.values)
     print("training completed\n")
-    X_train, X_test, y_train, y_test = train_test_split(train_df_x, train_df_y, test_size=0.15, random_state=1)
+    X_train, X_test, y_train, y_test = train_test_split(train_df_x, train_df_y, test_size=0.3, random_state=1)
     y_pred=clf.predict(X_test)
     print("\nthis is my model Accuracy:",metrics.accuracy_score(y_test, y_pred))
     print("\nreadcting documents from test folder\n")
