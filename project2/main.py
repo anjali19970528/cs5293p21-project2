@@ -38,14 +38,14 @@ def redact_test_folder_docs(glob_test_text):
         with io.open(thefile, 'r', encoding='utf-8') as fyl:
             text = fyl.read()
         names_list=get_entity(text)
-        print(names_list)
+       # print(names_list)
         doc=redacted_doc(names_list,text)
-        print(doc)
+       # print(doc)
         if not os.path.exists('redacted'):
             os.makedirs('redacted')
         text_file = thefile.split("/")[-1]
         output_file = text_file.replace('.txt', '.redacted')
-        print(output_file)
+       # print(output_file)
         file_obj = open('redacted/'+output_file, "w",encoding = "utf-8")
         file_obj.write(doc)
         file_obj.close()
@@ -80,10 +80,6 @@ def train_features(glob_text):
 def test_features(text, thefile):
     unic_char = '\u2588'
     redacted_list=[]
-#             print(text)
-   # names_list=get_entity(text)
-   # print(names_list)
-   # doc=redacted_doc(names_list,text)
     rating = int(re.findall(r'_(\d{1,2}).redacted',thefile)[0])
     red_block = unic_char + r'+\s*' + unic_char + r'+'
     for match in re.finditer(red_block, text):
@@ -104,7 +100,7 @@ def test_features(text, thefile):
 
 def unredactor(redacted_files_folder_path, destination_folder_path , clf):
     for thefile in glob.glob(redacted_files_folder_path):
-        print(thefile)
+       # print(thefile)
         with io.open(thefile, 'r', encoding='utf-8') as fyl:
             text = fyl.read()
         test_features_df, redacted_text = test_features(text, thefile)
@@ -112,16 +108,16 @@ def unredactor(redacted_files_folder_path, destination_folder_path , clf):
         predicted_names = clf.predict(test_features_X.values)
     #     filepath = filepath.replace('redacted','unredacted')
         redacted_blocks_indices_list = list(zip(test_features_df.start_index.values.tolist(), test_features_df.end_index.values.tolist()))
-        print(redacted_text)
+       # print(redacted_text)
         start_index = 0
         unredacted_text =''
-        print(len(predicted_names))
-        print(len(test_features_df.shape))
+       # print(len(predicted_names))
+       # print(len(test_features_df.shape))
         for i, pred_name in enumerate(predicted_names):
             
             name_start_index = redacted_blocks_indices_list[i][0]
             name_last_index = redacted_blocks_indices_list[i][1]
-            print(name_start_index, name_last_index, len(text))
+           # print(name_start_index, name_last_index, len(text))
             text_to_be_redacted = redacted_text.replace(redacted_text[name_start_index:name_last_index], pred_name)
             if i==len(predicted_names)-1:
                 unredacted_text = unredacted_text+' '+text_to_be_redacted[start_index:]
@@ -130,11 +126,11 @@ def unredactor(redacted_files_folder_path, destination_folder_path , clf):
                 unredacted_text = unredacted_text+' '+text_to_be_redacted[start_index:name_last_index]
             start_index = name_last_index
             
-        print(unredacted_text)
+       # print(unredacted_text)
         if not os.path.exists(destination_folder_path):
             os.makedirs(destination_folder_path)
         output_file = thefile.split("/")[-1]
-        print(output_file)
+       # print(output_file)
         output_file = output_file.replace('.redacted', '.txt')
         file_obj = open(destination_folder_path+'/'+output_file, "w",encoding = "utf-8")
         file_obj.write(unredacted_text)
